@@ -168,7 +168,7 @@ func reset_line():
 	smoothed_points.clear()
 	curr_pressures.clear()
 	curr_points.clear()
-
+	check_shape_timer = null
 
 func simplify_points(points: PackedVector2Array, epsilon: float) -> PackedVector2Array:
 	if points.size() < 3:

@@ -32,6 +32,8 @@ func handle_key(event: InputEventKey):
 	if EditorData.can_use_shortcuts && EditorTools.toggle_shortcuts.has(event.keycode):
 		EditorTools.toggle_to(EditorTools.toggle_shortcuts[event.keycode], event.pressed)
 
+
+var should_switch_to_select = false
 func handle_mouse_button(event: InputEventMouseButton):
 	if event.button_index == MOUSE_BUTTON_LEFT:
 		EditorData.mouse_down = event.pressed
@@ -69,11 +71,22 @@ func handle_mouse_button(event: InputEventMouseButton):
 						
 			elif EditorTools.is_current(EditorTools.TOOLS.ERASER):
 				EditorFuncs.canvas_manager.update_eraser()
-						
+			elif EditorTools.is_current(EditorTools.TOOLS.PEN):
+				if event.double_click:
+					should_switch_to_select = true
+		
+		#BUTTON LEFT UP
 		else:
 			match EditorTools.current_tool:
 				EditorTools.TOOLS.SELECT:
+					if !EditorFuncs.selection_manager.selection_rect &&  !EditorFuncs.selection_manager.selection_made:
+						EditorTools.set_tool(EditorTools.TOOLS.PEN)
 					EditorFuncs.selection_manager.update_selection()
+				EditorTools.TOOLS.PEN:
+					if should_switch_to_select:
+						EditorTools.set_tool(EditorTools.TOOLS.SELECT)
+						should_switch_to_select = false
+					
 
 	elif event.pressed && event.button_index == MOUSE_BUTTON_RIGHT:
 		match EditorTools.current_tool:

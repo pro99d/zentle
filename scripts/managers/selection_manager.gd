@@ -120,6 +120,8 @@ func single_click_selection():
 				
 			update_selection()
 			break
+			
+
 
 func perform_objs_selection(objs, rect):
 	clear_selection_status()
