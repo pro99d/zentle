@@ -1,0 +1,139 @@
+class_name CanvasManager
+
+var copy_buffer = []
+
+func make_copy(objs_duplicate: Array):
+	copy_buffer.clear()
+	if objs_duplicate.size() > 0:
+		copy_buffer = objs_duplicate
+	
+func paste_copy():
+	if copy_buffer.size() <= 0: return
+	
+	var new_objs = []
+	var rect = Rect2()
+	for obj in copy_buffer:
+		var new_obj = obj.duplicate()
+		new_obj.position += Vector2.ONE * EditorOptions.sq_size
+		new_objs.append(new_obj)
+		var new_rect = EditorFuncs.get_object_rect(new_obj)
+		
+		if obj.is_in_group("text"):
+			new_obj.text = obj.text
+		
+		if obj == copy_buffer[0]:
+			rect = new_rect
+		else:
+			rect = rect.merge(new_rect)
+	
+	EditorHistory.create_action("paste", add_objs.bind(new_objs), remove_objs.bind(new_objs), true)
+	EditorFuncs.selection_manager.perform_objs_selection(new_objs, rect)
+
+func add_to_canvas(node):
+	if is_instance_valid(node):
+		EditorData.main.canvas.add_child(node)
+
+func remove_from_canvas(node):
+	if is_instance_valid(node):
+		EditorData.main.canvas.remove_child(node)
+
+func get_canvas():
+	return EditorData.main.canvas
+
+func remove_objs(objs):
+	for obj in objs:
+		remove_from_canvas(obj)
+	
+func add_objs(objs):
+	for obj in objs:
+		add_to_canvas(obj)
+
+func rescale_obj(obj, k, origin):
+	if !is_instance_valid(obj): return
+	if obj is Line2D:
+		for i in range(obj.points.size()):
+			obj.points[i] = k * (obj.points[i] - origin) + origin
+	elif obj && obj.is_in_group("text"):
+		obj.scale *= k
+		obj.position = k * (obj.position - origin) + origin
+	elif obj is Control:
+		obj.size *= k
+		obj.position = k * (obj.position - origin) + origin
+	elif obj.is_in_group("template"):
+		obj.update_scale(k.x, origin)
+	elif obj.is_in_group("pdf"):
+		obj.update_scale(k.x, origin)
+	
+func rescale_objs(objs, k, origin):
+	for obj in objs:
+		rescale_obj(obj, k, origin)
+		
+func move_obj(obj, rel):
+	if !is_instance_valid(obj): return
+	if obj is Line2D:
+		for i in range(obj.points.size()):
+			obj.points[i] += rel
+	elif obj is Control:
+		obj.position += rel
+	elif obj.is_in_group("template"):
+		obj.position += rel
+	elif obj.is_in_group("pdf"):
+		obj.position += rel
+		
+func move_objs(objs, rel):
+	for obj in objs:
+		move_obj(obj, rel)
+		
+func edit_text_under_mouse():
+	for child in EditorData.get_tree().get_nodes_in_group("text"):
+		if child.is_visible_in_tree() && child.get_global_rect().has_point(EditorData.world_pos):
+			child.edit_text()
+			child.move_caret_to_mouse()
+			return true
+	return false
+	
+var erasing = false
+var curr_erased_lines = []
+func update_eraser():
+	if EditorData.mouse_down:
+		erasing = true
+		var rect_size = EditorData.curr_eraser_size / EditorData.camera.zoom.x
+		var vec_size = Vector2(rect_size, rect_size)
+		var mouse_rect = Rect2(EditorData.world_pos - vec_size / 2, vec_size)
+		var mouse_cell = round(EditorData.world_pos / EditorData.ERASER_SPATIAL_GRID_SIZE)
+		for x in range(-1, 2):
+			for y in range(-1, 2):
+				for line in EditorData.lines_spatial_grid.get(Vector2i(mouse_cell) + Vector2i(x, y), []):
+					if EditorFuncs.get_object_rect(line).intersects(mouse_rect):
+						if EditorFuncs.is_rect_over_line2d(line, mouse_rect):
+							for cell in line.get_meta("spatial_grid"):
+								if EditorData.lines_spatial_grid.has(cell):
+									EditorData.lines_spatial_grid[cell].erase(line)
+									if EditorData.lines_spatial_grid[cell].is_empty():
+										EditorData.lines_spatial_grid.erase(cell)
+									
+							if is_instance_valid(line):
+								if line.get_parent() ==  EditorData.main.canvas:
+									EditorHistory.create_action("erase", EditorFuncs.canvas_manager.remove_from_canvas.bind(line), EditorFuncs.canvas_manager.add_to_canvas.bind(line), true, line)
+							else:
+								pass #remove from grid?
+
+func update_text_edit_size():
+	var curr_focused = EditorData.get_viewport().gui_get_focus_owner()
+	if curr_focused and !curr_focused.is_queued_for_deletion() and curr_focused.is_in_group("text_edit"):
+		var text_edit = curr_focused
+		var target = text_edit.get_meta("target_text").get_ref()
+		text_edit.position = EditorFuncs.get_world_to_screen_pos(target.position)
+		text_edit.add_theme_font_size_override("font_size", target.curr_font_size * EditorData.camera.zoom.x)
+		await EditorData.get_tree().process_frame
+		if text_edit:
+			text_edit.size.y = 0
+			text_edit.size.x = 0
+			text_edit.update_minimum_size()
+
+func clear():
+	for child in get_children():
+		child.queue_free()
+
+func get_children():
+	return EditorData.main.canvas.get_children()

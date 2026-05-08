@@ -1,0 +1,173 @@
+extends Node
+
+signal user_color_changed(col: Color)
+
+var line_manager: LineManager
+var selection_manager: SelectionManger
+var ui_manager: UIManager
+var canvas_manager: CanvasManager
+
+func _init():
+	line_manager = LineManager.new()
+	selection_manager = SelectionManger.new()
+	canvas_manager = CanvasManager.new()
+	
+func set_ui_manager(manager):
+	ui_manager = manager
+
+func get_screen_to_world_pos(screen_pos : Vector2) -> Vector2:
+	return EditorData.camera.position + (screen_pos - EditorData.main.get_viewport_rect().size / 2) / EditorData.camera.zoom.x
+
+func get_world_to_screen_pos(world_pos : Vector2) -> Vector2:
+	return (world_pos - EditorData.camera.position) * EditorData.camera.zoom.x + (EditorData.main.get_viewport_rect().size / 2)
+
+func cam_zoomed(zoom):
+	canvas_manager.update_text_edit_size()
+
+func cam_moved(pos):
+	canvas_manager.update_text_edit_size()
+
+func handle_change_color(col):
+	selection_manager.change_color(EditorData.current_color, col)
+	EditorData.current_color = col
+	emit_signal("user_color_changed", col)
+
+func handle_copy():
+	if selection_manager.selection_made:
+		canvas_manager.make_copy(selection_manager.selection_made.objs.duplicate())
+
+func handle_paste():
+	canvas_manager.paste_copy()
+	
+func handle_save():
+	EditorFiles.begin_save_file()
+
+func begin_handle_new():
+	EditorFiles.show_confirm_dialog(self.end_handle_new)
+	
+func end_handle_new():
+	reset()
+	
+
+func reset():
+	selection_manager.clear_selection_status()
+	canvas_manager.clear()
+	EditorHistory.clear()
+	EditorData.camera.reset()
+	EditorFiles.set_current_path("")
+	
+
+func begin_handle_open():
+	EditorFiles.show_confirm_dialog(self.end_handle_open)
+	
+func end_handle_open():
+	EditorFiles.begin_open_file()
+
+func get_objects_rect(objs : Array) -> Rect2:
+	var new_rect = null
+	for o in objs:
+		var r = get_object_rect(o)
+		new_rect = r.merge(new_rect) if new_rect else r
+		
+	return new_rect
+
+func get_points_rect(points: PackedVector2Array):
+	if points.size() < 1: return Rect2()
+	var r = Rect2(points[0], Vector2.ZERO)
+	for p in points:
+		r = r.expand(p)
+	return r
+	
+func get_object_rect(obj) -> Rect2:
+	if !obj: return Rect2()
+	
+	var r = Rect2()
+	
+	if obj is Line2D:
+		r = get_points_rect(obj.points)
+			
+	elif obj is Control:
+		r = obj.get_global_rect()
+	elif obj is Sprite2D:
+		if obj.texture:
+			var s = obj.texture.get_size() * obj.scale
+			r = Rect2(-s/2, s)
+			r.position += obj.position
+	elif obj.is_in_group("template"):
+		r = get_objects_rect(obj.get_children())
+		r.position += obj.position
+	
+	return r.abs()
+	
+	
+func is_rect_over_line2d(line: Line2D, rect : Rect2):
+	var r_top_left = rect.position
+	var r_top_right = Vector2(rect.end.x, rect.position.y)
+	var r_bottom_left = Vector2(rect.position.x, rect.end.y)
+	var r_bottom_right = rect.end
+	
+	var rect_segments = [
+		[r_top_left, r_top_right],
+		[r_top_right, r_bottom_right],
+		[r_bottom_right, r_bottom_left],
+		[r_bottom_left, r_top_left]
+	]
+	
+	for point_i in range(line.points.size() - 1):
+		var curr_point = line.points[point_i] + line.position
+		if rect.has_point(curr_point):
+			return true
+			
+		for edge in rect_segments:
+			if Geometry2D.segment_intersects_segment(curr_point, line.points[point_i + 1], edge[0], edge[1]):
+				return true
+	return false
+
+func get_grid_pos(world_pos, fac = 1) -> Vector2:
+	var sq_size = EditorOptions.sq_size
+	var x = round(world_pos.x / (sq_size * fac)) * (sq_size * fac)
+	var y = round(world_pos.y / (sq_size * fac)) * (sq_size * fac)
+	return Vector2(x, y)
+
+func snap_to_grid(pos, fac = 1, threshold = 10):
+	var g = get_grid_pos(pos, fac)
+	return g if g.distance_to(pos) <= threshold else pos
+
+func parse_text_and_latex(text: String):
+	var segments = []
+	var regex = RegEx.new()
+	regex.compile("(?s)(\\$\\$|\\$)(.*?)\\1")
+	
+	var last_index = 0
+	var matches = regex.search_all(text)
+	
+	for m in matches:
+		var text_chunk = text.substr(last_index, m.get_start() - last_index)
+		if text_chunk != "":
+			var sub_parts = text_chunk.split("\n", true)
+			for i in range(sub_parts.size()):
+				if sub_parts[i] != "":
+					segments.append({"type": "text", "content": sub_parts[i]})
+				if i < sub_parts.size() - 1:
+					segments.append({"type": "newline"})
+		
+		var tag_type = m.get_string(1)
+		var content = m.get_string(2).strip_edges()
+		segments.append({
+			"type": "latex",
+			"mode": "display" if tag_type == "$$" else "inline",
+			"content": content
+		})
+		
+		last_index = m.get_end()
+	
+	var final_chunk = text.substr(last_index)
+	if final_chunk != "":
+		var sub_parts = final_chunk.split("\n", true)
+		for i in range(sub_parts.size()):
+			if sub_parts[i] != "":
+				segments.append({"type": "text", "content": sub_parts[i]})
+			if i < sub_parts.size() - 1:
+				segments.append({"type": "newline"})
+				
+	return segments

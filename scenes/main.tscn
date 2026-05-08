@@ -1,0 +1,311 @@
+[gd_scene format=3 uid="uid://bpe4mvhg62b6o"]
+
+[ext_resource type="Script" uid="uid://faqa6qoauqyp" path="res://scripts/main.gd" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://dafn1130to18c" path="res://scripts/camera.gd" id="2_0wfyh"]
+[ext_resource type="Script" uid="uid://cee5rp4hwhsho" path="res://scripts/draw_ui.gd" id="3_o6xl0"]
+[ext_resource type="Script" uid="uid://csflgbgc8t5th" path="res://scripts/background.gd" id="3_tbgi4"]
+[ext_resource type="Script" uid="uid://pqj0r1421k3x" path="res://scripts/managers/ui_manager.gd" id="4_jyhfs"]
+[ext_resource type="Texture2D" uid="uid://dst2713dtryk7" path="res://sprites/icons/pen_tool.png" id="6_85g3d"]
+[ext_resource type="Texture2D" uid="uid://bq8ea4bdrjngp" path="res://sprites/icons/select_tool.png" id="6_o6xl0"]
+[ext_resource type="Shader" uid="uid://dm3fosdcx3wdk" path="res://shaders/grid.gdshader" id="6_tefeu"]
+[ext_resource type="Texture2D" uid="uid://ubeakl5n7jsg" path="res://sprites/icons/hand_tool.png" id="6_tipki"]
+[ext_resource type="Texture2D" uid="uid://duqpl2y2887u4" path="res://sprites/icons/text_tool.png" id="9_eb6dy"]
+[ext_resource type="Texture2D" uid="uid://c4wnv8lqjfx8a" path="res://sprites/icons/eraser.png" id="9_ya4ey"]
+[ext_resource type="Texture2D" uid="uid://wy1knqyuv4jv" path="res://sprites/icons/delete_tool.png" id="10_eb6dy"]
+[ext_resource type="Texture2D" uid="uid://7b6jgsvelwvf" path="res://sprites/icons/copy_tool.png" id="12_a8y0u"]
+[ext_resource type="Texture2D" uid="uid://cwbfa05tjp8u2" path="res://sprites/icons/paste_tool.png" id="13_jkv2x"]
+[ext_resource type="Texture2D" uid="uid://y3s8y7jarrwn" path="res://sprites/icons/zoom.png" id="14_jkv2x"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tbgi4"]
+shader = ExtResource("6_tefeu")
+shader_parameter/square_size = 50.0
+shader_parameter/viewport_size = Vector2(0, 0)
+shader_parameter/camera_position = Vector2(0, 0)
+shader_parameter/camera_zoom = 0.0
+shader_parameter/grid_weight = 0.0
+shader_parameter/grid_col = Vector3(0.5, 0.5, 0.5)
+shader_parameter/background_col = Vector3(0.2, 0.2, 0.2)
+
+[sub_resource type="Animation" id="Animation_jkv2x"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("canvas_main/Control/view/top_panel/file_name:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_jbj1t"]
+resource_name = "save_label_animation"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("canvas_main/Control/view/top_panel/file_name:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.23333335, 0.4666667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.45188093, 0.6422648, 0.4557008, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_muem4"]
+_data = {
+&"RESET": SubResource("Animation_jkv2x"),
+&"save_label_animation": SubResource("Animation_jbj1t")
+}
+
+[node name="Main" type="Node2D" unique_id=671551885]
+script = ExtResource("1_o5qli")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=431555796]
+points = PackedVector2Array(0, -20, 10, 0, 0, 20, -10, 0)
+closed = true
+width = 5.0
+default_color = Color(1, 1, 1, 0.38039216)
+
+[node name="canvas" type="Node2D" parent="." unique_id=1568860248]
+
+[node name="draw_ui" type="Node2D" parent="." unique_id=742636793]
+script = ExtResource("3_o6xl0")
+
+[node name="background" type="Node2D" parent="." unique_id=1113087413 node_paths=PackedStringArray("back_rect")]
+script = ExtResource("3_tbgi4")
+back_rect = NodePath("../canvas_bg/ColorRect")
+
+[node name="camera" type="Camera2D" parent="." unique_id=1785678354 node_paths=PackedStringArray("z_slider")]
+script = ExtResource("2_0wfyh")
+z_slider = NodePath("../canvas_main/Control/VBoxContainer/VSlider")
+
+[node name="canvas_main" type="CanvasLayer" parent="." unique_id=108408841]
+script = ExtResource("4_jyhfs")
+
+[node name="Control" type="Control" parent="canvas_main" unique_id=1295469191]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="view" type="VBoxContainer" parent="canvas_main/Control" unique_id=442026429]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="top_panel" type="Panel" parent="canvas_main/Control/view" unique_id=731574821]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="canvas_main/Control/view/top_panel" unique_id=1013310430]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 40.0
+grow_horizontal = 2
+
+[node name="MenuBar" type="MenuBar" parent="canvas_main/Control/view/top_panel/HBoxContainer" unique_id=837110770]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+
+[node name="file_menu" type="PopupMenu" parent="canvas_main/Control/view/top_panel/HBoxContainer/MenuBar" unique_id=1054587808]
+title = "File"
+
+[node name="tools_btn" type="HBoxContainer" parent="canvas_main/Control/view/top_panel/HBoxContainer" unique_id=2098160643]
+layout_mode = 2
+
+[node name="pen_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=1538722229]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("6_85g3d")
+expand_icon = true
+
+[node name="hand_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=205273641]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("6_tipki")
+expand_icon = true
+
+[node name="select_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=2007516895]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("6_o6xl0")
+expand_icon = true
+
+[node name="text_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=525248601]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("9_eb6dy")
+expand_icon = true
+
+[node name="eraser_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=1362134942]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("9_ya4ey")
+expand_icon = true
+
+[node name="delete_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=219847737]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("10_eb6dy")
+expand_icon = true
+
+[node name="copy_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=425468621]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("12_a8y0u")
+expand_icon = true
+
+[node name="paste_btn" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn" unique_id=1612782835]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+icon = ExtResource("13_jkv2x")
+expand_icon = true
+
+[node name="color_grid" type="HBoxContainer" parent="canvas_main/Control/view/top_panel/HBoxContainer" unique_id=866815188]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="canvas_main/Control/view/top_panel/HBoxContainer/color_grid" unique_id=1797684947]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_constants/h_separation = 1
+theme_override_constants/v_separation = 1
+columns = 3
+
+[node name="0" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/color_grid/GridContainer" unique_id=244673330]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="1" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/color_grid/GridContainer" unique_id=1692127899]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="2" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/color_grid/GridContainer" unique_id=1724993569]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="3" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/color_grid/GridContainer" unique_id=842312326]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="4" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/color_grid/GridContainer" unique_id=1713860694]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="5" type="Button" parent="canvas_main/Control/view/top_panel/HBoxContainer/color_grid/GridContainer" unique_id=292251682]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="file_name" type="Label" parent="canvas_main/Control/view/top_panel" unique_id=1484092455]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -12.0
+offset_right = -15.0
+offset_bottom = 11.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "new file"
+
+[node name="draw_area" type="Control" parent="canvas_main/Control/view" unique_id=1871457432]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="canvas_main/Control" unique_id=1270762103]
+custom_minimum_size = Vector2(20, 300)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -320.0
+offset_right = 48.0
+offset_bottom = -20.0
+grow_vertical = 0
+size_flags_horizontal = 0
+mouse_filter = 0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="canvas_main/Control/VBoxContainer" unique_id=1670635668]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("14_jkv2x")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VSlider" type="VSlider" parent="canvas_main/Control/VBoxContainer" unique_id=1574308529]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+min_value = 0.15
+max_value = 1.0
+step = 0.01
+value = 0.15
+
+[node name="open_save_dialog" type="FileDialog" parent="canvas_main" unique_id=1163121996]
+oversampling_override = 1.0
+access = 2
+filters = PackedStringArray("*.wdata")
+use_native_dialog = true
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="canvas_main" unique_id=65153881]
+oversampling_override = 1.0
+title = "Save"
+initial_position = 2
+size = Vector2i(300, 100)
+ok_button_text = "Save"
+dialog_text = "Do you want to save the current file?"
+cancel_button_text = "Discard"
+
+[node name="canvas_bg" type="CanvasLayer" parent="." unique_id=113325402]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="canvas_bg" unique_id=2044573243]
+material = SubResource("ShaderMaterial_tbgi4")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="canvas_ui" type="CanvasLayer" parent="." unique_id=2073584200 groups=["canvas_ui"]]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=400995505]
+libraries/ = SubResource("AnimationLibrary_muem4")
+
+[connection signal="id_pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/MenuBar/file_menu" to="canvas_main" method="_on_file_menu_id_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/pen_btn" to="canvas_main" method="_on_pen_btn_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/hand_btn" to="canvas_main" method="_on_hand_btn_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/select_btn" to="canvas_main" method="_on_select_btn_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/text_btn" to="canvas_main" method="_on_text_btn_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/eraser_btn" to="canvas_main" method="_on_eraser_btn_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/delete_btn" to="canvas_main" method="_on_delete_btn_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/copy_btn" to="canvas_main" method="_on_copy_btn_pressed"]
+[connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/paste_btn" to="canvas_main" method="_on_paste_btn_pressed"]
+[connection signal="value_changed" from="canvas_main/Control/VBoxContainer/VSlider" to="camera" method="_on_v_slider_value_changed"]

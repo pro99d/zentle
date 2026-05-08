@@ -1,0 +1,43 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="write-rewrite"
+run/main_scene="uid://bpe4mvhg62b6o"
+config/features=PackedStringArray("4.6", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+EditorFuncs="*uid://cbd00nig62gna"
+EditorTools="*uid://bili80coqsvqm"
+EditorInputs="*uid://xg06flsmuw06"
+EditorData="*uid://bd5knl6tjv51n"
+EditorHistory="*uid://drc6qihbyblm2"
+EditorColors="*uid://b2vbfn6qqyxau"
+EditorOptions="*uid://y1k61da3guvd"
+EditorFiles="*uid://7ea0gntdds2k"
+
+[display]
+
+window/vsync/vsync_mode=0
+
+[dotnet]
+
+project/assembly_name="write-rewrite"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"
