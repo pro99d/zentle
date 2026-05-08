@@ -16,7 +16,6 @@ const CAM_SPEED = 15
 const CAM_SMOOTHNESS = 10
 const ZOOM_SENSITIVITY = 1.1
 
-var ctrl_to_zoom = true
 var cam_vel = Vector2()
 var target_vel = Vector2()
 var middle_pressed = false
@@ -32,7 +31,7 @@ func _unhandled_input(event):
 		
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			move = event.pressed
-		elif ctrl_to_zoom == event.ctrl_pressed:
+		elif EditorOptions.ctrl_to_zoom == event.ctrl_pressed:
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				z_slider.value = snapped(clamp(z_slider.value * ZOOM_SENSITIVITY, MIN_CAM_ZOOM, MAX_CAM_ZOOM), 0.001)
 			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
@@ -67,7 +66,6 @@ func mouse_wheel_pan_modifier(x):
 const MIN_CAM_ZOOM = 0.15
 const MAX_CAM_ZOOM = 1
 func _ready() -> void:
-	ctrl_to_zoom = EditorData.ctrl_to_zoom
 	target_zoom = 1
 	zoom = Vector2(target_zoom, target_zoom)
 	z_slider.value  = target_zoom

@@ -12,8 +12,32 @@ func _init():
 	selection_manager = SelectionManger.new()
 	canvas_manager = CanvasManager.new()
 	
+func _ready():
+	EditorOptions.connect("theme_changed", canvas_manager.on_theme_change)
+	
 func set_ui_manager(manager):
 	ui_manager = manager
+
+var animations: AnimationPlayer
+func play_animation(anim_name, reversed = false):
+	if reversed:
+		animations.play_backwards(anim_name)
+	else:
+		animations.play(anim_name)
+	
+func toggle_quick_tools():
+	if EditorData.quick_tools_opened:
+		EditorFuncs.close_quick_tools()
+	else:
+		EditorFuncs.open_quick_tools()
+
+func open_quick_tools():
+	EditorData.quick_tools_opened = true
+	play_animation("show_quick_tools")
+
+func close_quick_tools():
+	EditorData.quick_tools_opened = false
+	play_animation("show_quick_tools", true)
 
 func get_screen_to_world_pos(screen_pos : Vector2) -> Vector2:
 	return EditorData.camera.position + (screen_pos - EditorData.main.get_viewport_rect().size / 2) / EditorData.camera.zoom.x
@@ -27,8 +51,12 @@ func cam_zoomed(zoom):
 func cam_moved(pos):
 	canvas_manager.update_text_edit_size()
 
-func handle_change_color(col):
-	selection_manager.change_color(EditorData.current_color, col)
+func handle_change_color(col: Color):
+	if EditorTools.is_current(EditorTools.TOOLS.SELECT): 
+		selection_manager.change_color(EditorData.current_color, col)
+	else:
+		EditorTools.set_tool(EditorTools.TOOLS.PEN)
+	
 	EditorData.current_color = col
 	emit_signal("user_color_changed", col)
 

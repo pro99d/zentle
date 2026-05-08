@@ -1,6 +1,5 @@
 extends Node
 
-
 func handle_input(event: InputEvent):
 	if event is InputEventMouseButton:
 		handle_mouse_button(event)
@@ -14,6 +13,9 @@ func handle_key(event: InputEventKey):
 		EditorData.ctrl_pressed = event.pressed
 	elif event.keycode == KEY_DELETE:
 		EditorTools.delete()
+	elif event.keycode == KEY_ESCAPE:
+		if EditorData.quick_tools_opened:
+			EditorFuncs.close_quick_tools()
 	
 	elif event.pressed && event.ctrl_pressed:
 		if event.keycode == KEY_Y or (event.shift_pressed && event.keycode == KEY_Z):
@@ -28,6 +30,9 @@ func handle_key(event: InputEventKey):
 			EditorFuncs.handle_paste()
 		elif event.keycode == KEY_S:
 			EditorFuncs.handle_save()
+		if event.keycode == KEY_T && event.shift_pressed:
+			EditorFuncs.toggle_quick_tools()
+
 				
 	if EditorData.can_use_shortcuts && EditorTools.toggle_shortcuts.has(event.keycode):
 		EditorTools.toggle_to(EditorTools.toggle_shortcuts[event.keycode], event.pressed)
@@ -71,21 +76,12 @@ func handle_mouse_button(event: InputEventMouseButton):
 						
 			elif EditorTools.is_current(EditorTools.TOOLS.ERASER):
 				EditorFuncs.canvas_manager.update_eraser()
-			elif EditorTools.is_current(EditorTools.TOOLS.PEN):
-				if event.double_click:
-					should_switch_to_select = true
 		
 		#BUTTON LEFT UP
 		else:
 			match EditorTools.current_tool:
 				EditorTools.TOOLS.SELECT:
-					if !EditorFuncs.selection_manager.selection_rect &&  !EditorFuncs.selection_manager.selection_made:
-						EditorTools.set_tool(EditorTools.TOOLS.PEN)
 					EditorFuncs.selection_manager.update_selection()
-				EditorTools.TOOLS.PEN:
-					if should_switch_to_select:
-						EditorTools.set_tool(EditorTools.TOOLS.SELECT)
-						should_switch_to_select = false
 					
 
 	elif event.pressed && event.button_index == MOUSE_BUTTON_RIGHT:

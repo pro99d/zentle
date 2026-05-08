@@ -22,12 +22,12 @@ class ShapeRecognizerResult:
 		self.center = center
 		self.bounding_box = bounding_box
 
-func get_shape(points: PackedVector2Array) -> ShapeRecognizerResult:
+func get_shape(points: PackedVector2Array, checking_iter: int = 1) -> ShapeRecognizerResult:
 	var result = ShapeRecognizerResult.new(points, false, SHAPES.NONE)
 	if points.size() < 2: return result
 	
 	var snap_threshold = 25.0
-	if is_closed(points):
+	if is_closed(points, checking_iter):
 		var area = get_area(points)
 		var length = get_length(points)
 		var bounding_box = EditorFuncs.get_points_rect(points)
@@ -108,8 +108,8 @@ func get_corners_distance_score(points: PackedVector2Array, rect: Rect2) -> floa
 		
 	return total_min_distance / 4.0
 	
-func is_closed(points: PackedVector2Array):
-	return beg_end_dist(points) < 25
+func is_closed(points: PackedVector2Array, checking_iter: int):
+	return beg_end_dist(points) < 25 * checking_iter
 
 func get_rect_points(rect: Rect2) -> PackedVector2Array:
 	return PackedVector2Array([ rect.position, 

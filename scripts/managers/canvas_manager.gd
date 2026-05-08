@@ -14,7 +14,7 @@ func paste_copy():
 	var rect = Rect2()
 	for obj in copy_buffer:
 		var new_obj = obj.duplicate()
-		new_obj.position += Vector2.ONE * EditorOptions.sq_size
+		move_obj(new_obj, Vector2.ONE * EditorOptions.sq_size)
 		new_objs.append(new_obj)
 		var new_rect = EditorFuncs.get_object_rect(new_obj)
 		
@@ -114,7 +114,11 @@ func update_eraser():
 									
 							if is_instance_valid(line):
 								if line.get_parent() ==  EditorData.main.canvas:
-									EditorHistory.create_action("erase", EditorFuncs.canvas_manager.remove_from_canvas.bind(line), EditorFuncs.canvas_manager.add_to_canvas.bind(line), true, line)
+									var undo_func = func(l):
+										EditorFuncs.canvas_manager.add_to_canvas(l)
+										EditorFuncs.line_manager.set_spatial_grid_pos(l)
+										
+									EditorHistory.create_action("erase", EditorFuncs.canvas_manager.remove_from_canvas.bind(line), undo_func.bind(line), true, null, line)
 							else:
 								pass #remove from grid?
 
@@ -137,3 +141,15 @@ func clear():
 
 func get_children():
 	return EditorData.main.canvas.get_children()
+	
+func on_theme_change(old_palette):
+	for line2d in EditorData.get_tree().get_nodes_in_group("lines"):
+		var col_i = old_palette.find(line2d.default_color)
+		if col_i >= 0:
+			line2d.default_color = EditorColors.color_palette[col_i]
+		
+	for text in EditorData.get_tree().get_nodes_in_group("text"):
+		var col_i = old_palette.find(text.curr_color)
+		if col_i >= 0:
+			text.curr_color = EditorColors.color_palette[col_i]
+			text.modulate = text.curr_color

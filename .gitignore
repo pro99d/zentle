@@ -3,4 +3,5 @@
 /android/
 
 .editorconfig
+build
 test_docs

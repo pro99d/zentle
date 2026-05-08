@@ -1,22 +1,18 @@
 extends Node2D
 
-var GRID_COL = Color("2C2C2C")
-var GRID_WEIGHT = 2
-var BACK_COL = Color("#212121")
-var SQUARE_SIZE = 100
+func setup_background():
+	RenderingServer.set_default_clear_color(EditorColors.background_col)
+	setup_grid_shader()
+
+func setup_grid_shader():
+	var mat = back_rect.material
+	mat.set_shader_parameter("grid_weight", EditorOptions.grid_weight)
+	mat.set_shader_parameter("background_col", EditorColors.background_col)
+	mat.set_shader_parameter("grid_col", EditorColors.grid_col)
+	mat.set_shader_parameter("square_size", EditorOptions.sq_size)
 
 func _ready():
-	SQUARE_SIZE = EditorOptions.sq_size
-	
-	RenderingServer.set_default_clear_color(BACK_COL)
-	var mat = back_rect.material
-	
-	mat.set_shader_parameter("grid_weight", GRID_WEIGHT)
-	mat.set_shader_parameter("background_col", BACK_COL)
-	mat.set_shader_parameter("grid_col", GRID_COL)
-	mat.set_shader_parameter("square_size", SQUARE_SIZE)
-	
-	
+	EditorOptions.connect("theme_changed", func(old_palette): setup_background())
 	call_deferred("update_material_position", Vector2.ZERO)
 	call_deferred("update_material_zoom", 1)
 

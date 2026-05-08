@@ -7,8 +7,6 @@ class_name Main
 
 func _ready():
 	EditorData.main_ready(self)
-	
-	
 	EditorData.camera = camera
 	
 	camera.connect("has_moved", background.update_material_position)
@@ -19,7 +17,12 @@ func _ready():
 	
 	EditorData.draw_ui = $draw_ui
 	EditorFiles.set_animation_player($AnimationPlayer)
-
+	
+	EditorFuncs.animations = $AnimationPlayer
+	$canvas_main/MarginContainer.visible = false
+	
+	
+	
 
 func _unhandled_input(event):
 	EditorInputs.handle_input(event)

@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://7b6jgsvelwvf" path="res://sprites/icons/copy_tool.png" id="12_a8y0u"]
 [ext_resource type="Texture2D" uid="uid://cwbfa05tjp8u2" path="res://sprites/icons/paste_tool.png" id="13_jkv2x"]
 [ext_resource type="Texture2D" uid="uid://y3s8y7jarrwn" path="res://sprites/icons/zoom.png" id="14_jkv2x"]
+[ext_resource type="PackedScene" uid="uid://sifqnqeicb4c" path="res://scenes/quick_tools/theme_selector.tscn" id="15_jbj1t"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tbgi4"]
 shader = ExtResource("6_tefeu")
@@ -40,6 +41,42 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("canvas_main/MarginContainer:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("canvas_main/MarginContainer:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("canvas_main/MarginContainer:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_jbj1t"]
 resource_name = "save_label_animation"
@@ -57,10 +94,51 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1), Color(0.45188093, 0.6422648, 0.4557008, 1), Color(1, 1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_muem4"]
+resource_name = "show_quick_tools"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("canvas_main/MarginContainer:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, -50), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("canvas_main/MarginContainer:modulate")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("canvas_main/MarginContainer:visible")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, true]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_muem4"]
 _data = {
 &"RESET": SubResource("Animation_jkv2x"),
-&"save_label_animation": SubResource("Animation_jbj1t")
+&"save_label_animation": SubResource("Animation_jbj1t"),
+&"show_quick_tools": SubResource("Animation_muem4")
 }
 
 [node name="Main" type="Node2D" unique_id=671551885]
@@ -270,7 +348,6 @@ value = 0.15
 
 [node name="open_save_dialog" type="FileDialog" parent="canvas_main" unique_id=1163121996]
 oversampling_override = 1.0
-access = 2
 filters = PackedStringArray("*.wdata")
 use_native_dialog = true
 
@@ -282,6 +359,39 @@ size = Vector2i(300, 100)
 ok_button_text = "Save"
 dialog_text = "Do you want to save the current file?"
 cancel_button_text = "Discard"
+
+[node name="MarginContainer" type="MarginContainer" parent="canvas_main" unique_id=1097161308]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 250
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 250
+theme_override_constants/margin_bottom = 200
+
+[node name="quick_options" type="Control" parent="canvas_main/MarginContainer" unique_id=580674118]
+custom_minimum_size = Vector2(600, 250)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="canvas_main/MarginContainer/quick_options" unique_id=1837705761]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LineEdit" type="LineEdit" parent="canvas_main/MarginContainer/quick_options/VBoxContainer" unique_id=371449232]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="canvas_main/MarginContainer/quick_options/VBoxContainer" unique_id=124272823]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ThemeSelector" parent="canvas_main/MarginContainer/quick_options/VBoxContainer/Panel" unique_id=1192998557 instance=ExtResource("15_jbj1t")]
+layout_mode = 1
 
 [node name="canvas_bg" type="CanvasLayer" parent="." unique_id=113325402]
 layer = -1

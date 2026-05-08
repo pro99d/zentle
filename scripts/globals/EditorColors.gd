@@ -9,6 +9,9 @@ var color_palette = [
 	Color("65b085ff"),
 ]
 
+var background_col: Color = Color("#212121")
+var grid_col: Color = Color("#2C2C2C")
+
 enum UI {
 	TEXT_MAIN, TEXT_DARK, TEXT_LIGHT,
 	BG_DARK, BG_PANEL,
@@ -29,6 +32,7 @@ var color_names = [
 	"success"
 ]
 
+var current_theme = "theme"
 
 func _ready():
 	calc_ui_color_palette()
@@ -55,3 +59,6 @@ func calc_ui_color_palette():
 	
 	ui_palette[UI.SUCCESS] = success
 	ui_palette[UI.SUCCESS_BG] = success.darkened(0.6)
+
+func get_color_index(color: Color) -> int:
+	return color_palette.find(color)

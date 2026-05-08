@@ -28,6 +28,9 @@ func _ready():
 	EditorFiles.set_confirm_dialog($ConfirmationDialog)
 	
 	
+	EditorOptions.connect("theme_changed", func(old_palette): reload_color_grid())
+	
+	
 func save():
 	EditorFuncs.handle_save()
 	
@@ -94,13 +97,22 @@ func load_color_grid():
 		set_stbox_unselected(btn, col)
 		
 		btn.connect("pressed", func(): 
-			EditorFuncs.handle_change_color(col)
-			set_stbox_selected(btn, col)
+			EditorFuncs.handle_change_color(EditorColors.color_palette[i_btn])
+			set_stbox_selected(btn, EditorColors.color_palette[i_btn])
 			if prev_sel_btn_i >= 0 && prev_sel_btn_i != i_btn:
 				set_stbox_unselected(col_btns[prev_sel_btn_i], EditorColors.color_palette[prev_sel_btn_i])
 			
 			prev_sel_btn_i = i_btn
 		)
+		
+func reload_color_grid():
+	var col_btns = $Control/view/top_panel/HBoxContainer/color_grid/GridContainer.get_children()
+	for i_btn in range(col_btns.size()):
+		var btn = col_btns[i_btn]
+		var col = EditorColors.color_palette[i_btn]
+		load_btn_stylebox(btn)
+		set_stbox_unselected(btn, col)
+
 
 func _on_pen_btn_pressed():
 	EditorTools.set_tool(EditorTools.TOOLS.PEN)

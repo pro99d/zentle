@@ -17,6 +17,7 @@ var toggle_shortcuts = {
 	KEY_S: TOOLS.SELECT,
 	KEY_H: TOOLS.HAND,
 	KEY_Q: TOOLS.PEN,
+	KEY_T: TOOLS.TEXT,
 }
 
 var current_tool: TOOLS = TOOLS.PEN
@@ -24,6 +25,8 @@ var saved_tool: TOOLS = TOOLS.NONE
 
 func _ready():
 	EditorFuncs.connect("user_color_changed", func(col): update_cursor())
+	EditorData.current_color = EditorColors.color_palette[0]
+	update_cursor()
 
 func is_current(_tool: TOOLS):
 	return current_tool == _tool

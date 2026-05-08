@@ -7,7 +7,7 @@ var last_save_version = 1
 func _ready():
 	undo_redo.max_steps = 5
 
-func create_action(action_name: String, do_call: Callable, undo_call: Callable, call_do: bool = true, do_ref = null):
+func create_action(action_name: String, do_call: Callable, undo_call: Callable, call_do: bool = true, do_ref = null, undo_ref = null):
 	undo_redo.create_action(action_name)
 	
 	undo_redo.add_do_method(do_call)
@@ -15,6 +15,8 @@ func create_action(action_name: String, do_call: Callable, undo_call: Callable, 
 	
 	if do_ref:
 		undo_redo.add_do_reference(do_ref)
+	if undo_ref:
+		undo_redo.add_undo_reference(undo_ref)
 	
 	undo_redo.commit_action(call_do)
 	history_changed.emit()

@@ -7,7 +7,6 @@ var snapped_world_relative: Vector2 = Vector2()
 var pressure: float = 1
 
 var mouse_down: bool = false
-var ctrl_to_zoom: bool = true
 var camera: EditorCamera
 
 var ctrl_pressed: bool = false
@@ -26,6 +25,7 @@ var lines_spatial_grid = {}
 var ERASER_SPATIAL_GRID_SIZE = 100
 
 var can_use_shortcuts = true
+var quick_tools_opened = false
 
 func main_ready(main: Main):
 	self.main = main
