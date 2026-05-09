@@ -121,7 +121,6 @@ func draw_line():
 var found_shape : ShapeRecognizer.ShapeRecognizerResult = null
 var shape_check_iter = 0
 func check_shape():
-	print("Checking for Shape")
 	if !current_line: return
 	shape_check_iter += 1
 	var result = shape_recognizer.get_shape(current_line.points, shape_check_iter)

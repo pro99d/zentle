@@ -107,7 +107,7 @@ func single_click_selection():
 			return
 	
 	var objs = EditorFuncs.canvas_manager.get_canvas().get_children()
-	for objs_i in range(objs.size() - 1, 0, -1):
+	for objs_i in range(objs.size() - 1, -1, -1):
 		var child = objs[objs_i]
 		var new_rect = EditorFuncs.get_object_rect(child)
 		if new_rect.has_point(EditorData.world_pos):
