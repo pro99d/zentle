@@ -17,7 +17,9 @@ func _ready():
 	var cl = get_tree().get_nodes_in_group("canvas_ui")
 	if cl[0]:
 		text_edit = CodeEdit.new()
+		text_edit.add_auto_brace_completion_pair("$", "$")
 		text_edit.auto_brace_completion_enabled = true
+		text_edit.auto_brace_completion_highlight_matching = true
 		
 		#text_edit.mouse_default_cursor_shape = Control.CURSOR_ARROW
 		text_edit.add_to_group("text_edit")
@@ -92,16 +94,16 @@ func render(text: String):
 			var new_l = get_text_node()
 			new_l.text = data.content
 			line.add_child(new_l)
-		#elif data.type == "latex":
-			#if data.mode == "inline":
-				#var ret : ImageTexture = GenerateLatexImg.GenerateImg(data.content, curr_font_size)
-				#if ret:
-					#var new_s = TextureRect.new()
-					#new_s.expand_mode = TextureRect.EXPAND_KEEP_SIZE
-					#new_s.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-					#
-					#new_s.texture = ret
-					#line.add_child(new_s)
+		elif data.type == "latex":
+			if data.mode == "inline":
+				var ret : ImageTexture = EditorFuncs.latex_generator.GetImage(data.content, curr_font_size)
+				if ret:
+					var new_s = TextureRect.new()
+					new_s.expand_mode = TextureRect.EXPAND_KEEP_SIZE
+					new_s.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+					
+					new_s.texture = ret
+					line.add_child(new_s)
 			#elif data.mode == "display":
 				#var ret : ImageTexture = GenerateLatexImg.GenerateImg(data.content, curr_font_size * 2)
 				#if ret:
@@ -117,7 +119,7 @@ func render(text: String):
 					#line.add_child(new_s)
 					#$content.add_child(line)
 					#line = HBoxContainer.new()
-				#
+				
 		elif data.type == "newline":
 			if line.get_child_count() == 0:
 				var l = Control.new()

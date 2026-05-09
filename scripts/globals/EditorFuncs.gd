@@ -7,10 +7,14 @@ var selection_manager: SelectionManger
 var ui_manager: UIManager
 var canvas_manager: CanvasManager
 
+
+var latex_generator: GenerateLatexImg
+
 func _init():
 	line_manager = LineManager.new()
 	selection_manager = SelectionManger.new()
 	canvas_manager = CanvasManager.new()
+	latex_generator = GenerateLatexImg.new()
 	
 func _ready():
 	EditorOptions.connect("theme_changed", canvas_manager.on_theme_change)
@@ -54,7 +58,7 @@ func cam_moved(pos):
 func handle_change_color(col: Color):
 	if EditorTools.is_current(EditorTools.TOOLS.SELECT): 
 		selection_manager.change_color(EditorData.current_color, col)
-	else:
+	elif !EditorTools.is_current(EditorTools.TOOLS.TEXT):
 		EditorTools.set_tool(EditorTools.TOOLS.PEN)
 	
 	EditorData.current_color = col
@@ -113,7 +117,8 @@ func get_object_rect(obj) -> Rect2:
 	
 	if obj is Line2D:
 		r = get_points_rect(obj.points)
-			
+		r.position += obj.position
+		
 	elif obj is Control:
 		r = obj.get_global_rect()
 	elif obj is Sprite2D:

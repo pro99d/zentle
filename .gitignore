@@ -5,3 +5,5 @@
 .editorconfig
 build
 test_docs
+
+.vs
