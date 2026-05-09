@@ -82,6 +82,8 @@ func end_save_to_path(path: String):
 	f.close()
 	
 	if success:
+		if !curr_path:
+			set_current_path(path)
 		set_to_saved()
 		EditorHistory.mark_save_point()
 		animations.play("save_label_animation")

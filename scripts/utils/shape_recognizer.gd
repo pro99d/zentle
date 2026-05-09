@@ -46,7 +46,7 @@ func get_shape(points: PackedVector2Array, checking_iter: int = 1) -> ShapeRecog
 		result.bounding_box = bounding_box
 		
 		var avg_corner_dist = get_corners_distance_score(points, bounding_box)
-		var threshold = bounding_box.size.length() * 0.1
+		var threshold = bounding_box.size.length() * 0.1 * checking_iter
 		if avg_corner_dist < threshold:
 			#RECT
 			if abs(area / bounding_area - 1) < 0.15:
@@ -70,7 +70,7 @@ func get_shape(points: PackedVector2Array, checking_iter: int = 1) -> ShapeRecog
 				result.recognized = true
 				return result
 	else:
-		if check_for_segment(points):
+		if check_for_segment(points, checking_iter):
 			var start = points[0]
 			var end = points[points.size() - 1]
 			
@@ -140,8 +140,8 @@ func calc_centroid(points: PackedVector2Array):
 	return c
 
 	
-func check_for_segment(points: PackedVector2Array) -> bool:
-	return beg_end_dist(points) / get_length(points) > 0.98
+func check_for_segment(points: PackedVector2Array, checking_iter: int) -> bool:
+	return beg_end_dist(points) / get_length(points) > pow(0.98, checking_iter)
 
 func beg_end_dist(points: PackedVector2Array):
 	return (points[0] - points[points.size() - 1]).length()

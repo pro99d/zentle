@@ -34,7 +34,7 @@ func handle_key(event: InputEventKey):
 			EditorFuncs.toggle_quick_tools()
 
 				
-	if EditorData.can_use_shortcuts && EditorTools.toggle_shortcuts.has(event.keycode):
+	elif EditorData.can_use_shortcuts && EditorTools.toggle_shortcuts.has(event.keycode):
 		EditorTools.toggle_to(EditorTools.toggle_shortcuts[event.keycode], event.pressed)
 
 

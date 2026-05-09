@@ -103,5 +103,6 @@ func _on_v_slider_value_changed(value: float) -> void:
 	target_zoom = max(MIN_CAM_ZOOM, min(MAX_CAM_ZOOM, value))
 	
 func reset():
-	target_zoom = 1
+	z_slider.value = 1
 	position = Vector2.ZERO
+	emit_signal("has_moved", position)

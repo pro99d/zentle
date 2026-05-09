@@ -25,6 +25,8 @@ var saved_tool: TOOLS = TOOLS.NONE
 
 func _ready():
 	EditorFuncs.connect("user_color_changed", func(col): update_cursor())
+	EditorOptions.connect("theme_changed", func(col): update_cursor())
+	
 	EditorData.current_color = EditorColors.color_palette[0]
 	update_cursor()
 
@@ -44,27 +46,28 @@ func toggle_to(_tool: TOOLS, active: bool):
 		set_tool(_tool)
 	
 func update_cursor():
+	var img = Image.create(4, 4, false, Image.FORMAT_RGB8)
+	
 	match current_tool:
 		TOOLS.ERASER:
-			var img = Image.create(EditorData.curr_eraser_size, EditorData.curr_eraser_size, false, Image.FORMAT_RGB8)
+			img = Image.create(EditorData.curr_eraser_size, EditorData.curr_eraser_size, false, Image.FORMAT_RGB8)
 			img.fill(Color.WHITE)
-			Input.set_custom_mouse_cursor(img, Input.CURSOR_ARROW, img.get_size() / 2)
 		TOOLS.PEN:
-			var img = Image.create(4, 4, false, Image.FORMAT_RGB8)
 			img.fill(EditorData.current_color)
-			Input.set_custom_mouse_cursor(img)
 		TOOLS.SELECT:
-			var img = Image.load_from_file("res://sprites/icons/select_cursor.png")
+			img = Image.load_from_file("res://sprites/icons/select_cursor.png")
 			img.resize(32, 32)
-			Input.set_custom_mouse_cursor(img, Input.CURSOR_ARROW, img.get_size() / 2)
 		TOOLS.TEXT:
-			var img = Image.load_from_file("res://sprites/icons/text_cursor.png")
-			img.resize(32, 32)
-			Input.set_custom_mouse_cursor(img, Input.CURSOR_ARROW, img.get_size() / 2)
+			img = Image.load_from_file("res://sprites/icons/text_cursor.png")
+			var overlay = Image.create_empty(img.get_width(), img.get_height(), false, img.get_format())
+			overlay.fill(EditorData.current_color)
+			img.blit_rect_mask(overlay, img, Rect2i(Vector2.ZERO, overlay.get_size()), Vector2.ZERO)
 		TOOLS.HAND:
-			var img = Image.load_from_file("res://sprites/icons/hand_cursor.png")
+			img = Image.load_from_file("res://sprites/icons/hand_cursor.png")
 			img.resize(32, 32)
-			Input.set_custom_mouse_cursor(img, Input.CURSOR_ARROW, img.get_size() / 2)
+			
+	
+	Input.set_custom_mouse_cursor(img, Input.CURSOR_ARROW, img.get_size() / 2)
 		
 func set_tool(_tool: TOOLS):
 	if _tool == current_tool || _tool == TOOLS.NONE: 

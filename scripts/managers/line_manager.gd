@@ -44,6 +44,9 @@ func create_line():
 
 	curr_points.append(EditorData.world_pos)
 	curr_pressures.append(EditorData.pressure)
+	
+	check_shape_timer = EditorData.get_tree().create_timer(1)
+	check_shape_timer.connect("timeout", check_shape)
 
 func handle_mouse_motion():
 	if EditorData.mouse_down:
@@ -113,14 +116,12 @@ func draw_line():
 		return
 
 	_update_width_curve(num_points)
-	if !check_shape_timer: 
-		check_shape_timer = EditorData.get_tree().create_timer(1)
-		check_shape_timer.connect("timeout", check_shape)
 	check_shape_timer.time_left = 1
 
 var found_shape : ShapeRecognizer.ShapeRecognizerResult = null
 var shape_check_iter = 0
 func check_shape():
+	print("Checking for Shape")
 	if !current_line: return
 	shape_check_iter += 1
 	var result = shape_recognizer.get_shape(current_line.points, shape_check_iter)

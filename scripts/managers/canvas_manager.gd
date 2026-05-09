@@ -54,7 +54,6 @@ func rescale_obj(obj, k, origin):
 		obj.position = k * (obj.position - origin) + origin
 		
 		var avg_scale = ((abs(k.x) + abs(k.y)) / 2.0) if k is Vector2 else k
-		obj.width = obj.width * avg_scale
 		
 		for i in range(obj.points.size()):
 			obj.points[i] *= k

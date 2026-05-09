@@ -39,7 +39,7 @@ func calc_handle(mouse_pos : Vector2):
 
 
 func is_cursor_inside(mouse_pos : Vector2):
-	return get_rect().has_point(mouse_pos)
+	return get_rect().grow(10).has_point(mouse_pos)
 
 func get_handle() -> Vector2:
 	return points[curr_handle]

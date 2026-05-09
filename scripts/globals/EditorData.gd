@@ -29,3 +29,6 @@ var quick_tools_opened = false
 
 func main_ready(main: Main):
 	self.main = main
+	
+func _ready():
+	EditorOptions.connect("theme_changed", func(col): draw_ui.queue_redraw())

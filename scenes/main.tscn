@@ -200,6 +200,7 @@ size_flags_horizontal = 8
 size_flags_vertical = 4
 
 [node name="file_menu" type="PopupMenu" parent="canvas_main/Control/view/top_panel/HBoxContainer/MenuBar" unique_id=1054587808]
+oversampling_override = 1.0
 title = "File"
 
 [node name="tools_btn" type="HBoxContainer" parent="canvas_main/Control/view/top_panel/HBoxContainer" unique_id=2098160643]
@@ -392,6 +393,26 @@ size_flags_vertical = 3
 
 [node name="ThemeSelector" parent="canvas_main/MarginContainer/quick_options/VBoxContainer/Panel" unique_id=1192998557 instance=ExtResource("15_jbj1t")]
 layout_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="canvas_main/MarginContainer/quick_options/VBoxContainer/Panel" unique_id=1771742661]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="latex_preview" type="TextureRect" parent="canvas_main" unique_id=1914542287]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="canvas_bg" type="CanvasLayer" parent="." unique_id=113325402]
 layer = -1

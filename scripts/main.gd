@@ -21,6 +21,8 @@ func _ready():
 	EditorFuncs.animations = $AnimationPlayer
 	$canvas_main/MarginContainer.visible = false
 	
+	Engine.max_fps = 120
+	
 	
 	
 

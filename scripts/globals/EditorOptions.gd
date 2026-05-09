@@ -9,7 +9,8 @@ var grid_weight = 2
 var current_theme = "theme_default"
 var ctrl_to_zoom = false
 
-var shape_snap_tolerance = 0.5
+var shape_snap_tolerance = 0.5		#0.5 half a square
+var shape_snap_dist = 20      		#dist before snapping
 
 func _ready():
 	call_deferred("load_config_file")
@@ -22,9 +23,12 @@ func load_config_file():
 		save_default_settings()
 		return
 	
-	EditorOptions.current_theme = config.get_value("editor", "current_theme", "theme_default")
-	EditorOptions.sq_size = int(config.get_value("editor", "sq_size", EditorOptions.sq_size))
-	EditorOptions.ctrl_to_zoom = bool(config.get_value("editor", "ctrl_to_zoom", EditorOptions.ctrl_to_zoom))
+	current_theme = config.get_value("editor", "current_theme", "theme_default")
+	sq_size = int(config.get_value("editor", "sq_size", sq_size))
+	ctrl_to_zoom = bool(config.get_value("editor", "ctrl_to_zoom", ctrl_to_zoom))
+	realtime_move_scale = bool(config.get_value("editor", "realtime_move_scale", realtime_move_scale))
+	
+	
 	load_themes_from_settings()
 	
 	load_theme(current_theme)
