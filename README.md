@@ -12,6 +12,7 @@ Pen (q)
 Hand (h) - for panning  \
 Select (s)
   - press Ctrl while scaling and moving to snap to the grid
+  - hold Ctrl while making a box selection to only select objects that are inside the box
     
 Text (t)
   - surround the text with \__...\__ to underline, with \**...\**  to bold
@@ -51,4 +52,5 @@ grid_weight=2
 To define a new theme, create a new section that begins with "theme_" (e.g \[theme_gruvbox\]) \
 Each theme has 6 colors (main_text, critical, important, quote, meta, success) + the background and grid colors.
 
-
+#### File saving
+Files are currently saved in a binary format and cannot be exported
