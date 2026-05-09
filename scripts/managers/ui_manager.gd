@@ -30,6 +30,7 @@ func _ready():
 	
 	EditorOptions.connect("theme_changed", func(old_palette): reload_color_grid())
 	
+	$Control/view/top_panel/HBoxContainer/pen_size.value = EditorData.current_size
 	
 func save():
 	EditorFuncs.handle_save()
@@ -137,3 +138,7 @@ func _on_copy_btn_pressed():
 
 func _on_paste_btn_pressed():
 	EditorFuncs.handle_paste()
+
+
+func _on_pen_size_value_changed(value):
+	EditorData.current_size = value

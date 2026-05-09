@@ -294,6 +294,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="pen_size" type="HSlider" parent="canvas_main/Control/view/top_panel/HBoxContainer" unique_id=1262561150]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+min_value = 5.0
+max_value = 50.0
+value = 5.0
+
 [node name="file_name" type="Label" parent="canvas_main/Control/view/top_panel" unique_id=1484092455]
 layout_mode = 1
 anchors_preset = 6
@@ -439,4 +448,5 @@ libraries/ = SubResource("AnimationLibrary_muem4")
 [connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/delete_btn" to="canvas_main" method="_on_delete_btn_pressed"]
 [connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/copy_btn" to="canvas_main" method="_on_copy_btn_pressed"]
 [connection signal="pressed" from="canvas_main/Control/view/top_panel/HBoxContainer/tools_btn/paste_btn" to="canvas_main" method="_on_paste_btn_pressed"]
+[connection signal="value_changed" from="canvas_main/Control/view/top_panel/HBoxContainer/pen_size" to="canvas_main" method="_on_pen_size_value_changed"]
 [connection signal="value_changed" from="canvas_main/Control/VBoxContainer/VSlider" to="camera" method="_on_v_slider_value_changed"]
