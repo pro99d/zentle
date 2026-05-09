@@ -10,8 +10,10 @@ config_version=5
 
 [application]
 
-config/name="write-rewrite"
+config/name="zentle"
 run/main_scene="uid://bpe4mvhg62b6o"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="zentle"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -32,7 +34,7 @@ window/vsync/vsync_mode=0
 
 [dotnet]
 
-project/assembly_name="write-rewrite"
+project/assembly_name="zentle"
 
 [physics]
 
