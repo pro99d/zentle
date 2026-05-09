@@ -72,7 +72,7 @@ func update_line():
 		draw_line()
 	
 func update_shape():
-	var world_snapped = EditorFuncs.snap_to_grid(EditorData.world_pos, EditorOptions.shape_snap_tolerance)
+	var world_snapped = EditorFuncs.snap_to_grid(EditorData.world_pos, EditorOptions.shape_snap_tolerance, EditorOptions.shape_snap_dist)
 	match found_shape.shape:
 		ShapeRecognizer.SHAPES.CIRCLE:
 			var new_radius = (found_shape.center - world_snapped).length()
@@ -162,6 +162,7 @@ func done():
 			
 		if smoothed_points.size() > 2:
 			current_line.points = simplify_points(smoothed_points, 0.75)
+			
 	set_spatial_grid_pos(current_line)
 	reset_line()
 	

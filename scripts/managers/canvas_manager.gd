@@ -51,8 +51,13 @@ func add_objs(objs):
 func rescale_obj(obj, k, origin):
 	if !is_instance_valid(obj): return
 	if obj is Line2D:
+		obj.position = k * (obj.position - origin) + origin
+		
+		var avg_scale = ((abs(k.x) + abs(k.y)) / 2.0) if k is Vector2 else k
+		obj.width = obj.width * avg_scale
+		
 		for i in range(obj.points.size()):
-			obj.points[i] = k * (obj.points[i] - origin) + origin
+			obj.points[i] *= k
 	elif obj && obj.is_in_group("text"):
 		obj.scale *= k
 		obj.position = k * (obj.position - origin) + origin
