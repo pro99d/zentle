@@ -6,10 +6,10 @@ func setup_background():
 
 func setup_grid_shader():
 	var mat = back_rect.material
-	mat.set_shader_parameter("grid_weight", EditorOptions.grid_weight)
+	mat.set_shader_parameter("grid_weight", EditorOptions.options[EditorOptions.OPTIONS.GRID_WEIGHT])
 	mat.set_shader_parameter("background_col", EditorColors.background_col)
 	mat.set_shader_parameter("grid_col", EditorColors.grid_col)
-	mat.set_shader_parameter("square_size", EditorOptions.sq_size)
+	mat.set_shader_parameter("square_size", EditorOptions.options[EditorOptions.OPTIONS.SQ_SIZE])
 
 func _ready():
 	EditorOptions.connect("theme_changed", func(old_palette): setup_background())

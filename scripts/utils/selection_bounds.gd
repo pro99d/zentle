@@ -87,7 +87,7 @@ func scale(rel : Vector2, proportional : bool):
 		points = old_points
 	else:
 		last_scale_factor *= k
-		if EditorOptions.realtime_move_scale:
+		if EditorOptions.options[EditorOptions.OPTIONS.REALTIME_MOVE_SCALE]:
 			EditorFuncs.canvas_manager.rescale_objs(objs, k, origin)
 			
 var last_scale_factor = 1
@@ -105,7 +105,7 @@ func end_move_scale():
 	EditorHistory.create_action("move_scale", do_func.bind(last_move_factor, last_scale_factor, origin), do_func.bind(-last_move_factor, inv_last_scale_factor, origin), false)
 	
 	
-	if !EditorOptions.realtime_move_scale:
+	if !EditorOptions.options[EditorOptions.OPTIONS.REALTIME_MOVE_SCALE]:
 		do_func.call(last_move_factor, last_scale_factor, origin)
 	
 	for obj in objs:
@@ -133,7 +133,7 @@ func move(rel : Vector2):
 	for i in points.size():
 		points[i] += rel
 	
-	if EditorOptions.realtime_move_scale:
+	if EditorOptions.options[EditorOptions.OPTIONS.REALTIME_MOVE_SCALE]:
 		EditorFuncs.canvas_manager.move_objs(objs, rel)
 
 func get_rect() -> Rect2:

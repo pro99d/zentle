@@ -40,7 +40,7 @@ func paste_copy():
 			var new_obj = obj.duplicate()
 			
 			# Add an offset to the copied item
-			move_obj(new_obj, Vector2.ONE * EditorOptions.sq_size)
+			move_obj(new_obj, Vector2.ONE * EditorOptions.options[EditorOptions.OPTIONS.SQ_SIZE])
 			
 			new_objs.append(new_obj)
 			var new_rect = EditorFuncs.get_object_rect(new_obj)

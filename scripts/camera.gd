@@ -31,7 +31,7 @@ func _unhandled_input(event):
 		
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			move = event.pressed
-		elif EditorOptions.ctrl_to_zoom == event.ctrl_pressed:
+		elif EditorOptions.options[EditorOptions.OPTIONS.CTRL_TO_ZOOM] == event.ctrl_pressed:
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				z_slider.value = snapped(clamp(z_slider.value * ZOOM_SENSITIVITY, MIN_CAM_ZOOM, MAX_CAM_ZOOM), 0.001)
 			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:

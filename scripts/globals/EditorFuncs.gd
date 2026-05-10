@@ -157,7 +157,7 @@ func is_rect_over_line2d(line: Line2D, rect : Rect2):
 	return false
 
 func get_grid_pos(world_pos, fac = 1) -> Vector2:
-	var sq_size = EditorOptions.sq_size
+	var sq_size = EditorOptions.options[EditorOptions.OPTIONS.SQ_SIZE]
 	var x = round(world_pos.x / (sq_size * fac)) * (sq_size * fac)
 	var y = round(world_pos.y / (sq_size * fac)) * (sq_size * fac)
 	return Vector2(x, y)

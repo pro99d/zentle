@@ -45,7 +45,7 @@ func create_line():
 	curr_points.append(EditorData.world_pos)
 	curr_pressures.append(EditorData.pressure)
 	
-	check_shape_timer = EditorData.get_tree().create_timer(1)
+	check_shape_timer = EditorData.get_tree().create_timer(EditorOptions.options[EditorOptions.OPTIONS.SHAPE_RECOGNIZER_DELAY])
 	check_shape_timer.connect("timeout", check_shape)
 
 func handle_mouse_motion():
@@ -132,7 +132,7 @@ func check_shape():
 	else:
 		check_shape_timer = EditorData.get_tree().create_timer(1)
 		check_shape_timer.connect("timeout", check_shape)
-		check_shape_timer.time_left = 1
+		check_shape_timer.time_left = EditorOptions.options[EditorOptions.OPTIONS.SHAPE_RECOGNIZER_DELAY]
 
 func _update_width_curve(num_points: int):
 	var curve = current_line.width_curve

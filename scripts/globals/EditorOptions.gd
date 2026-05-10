@@ -3,11 +3,31 @@ extends Node
 signal theme_changed(old_palette)
 signal config_loaded
 
-var realtime_move_scale = true
-var sq_size = 100
-var grid_weight = 2
 var current_theme = ""
-var ctrl_to_zoom = false
+
+enum OPTIONS {
+	SQ_SIZE,
+	CTRL_TO_ZOOM,
+	REALTIME_MOVE_SCALE,
+	GRID_WEIGHT,
+	SHAPE_RECOGNIZER_DELAY
+}
+
+var options: Dictionary = {
+	OPTIONS.SQ_SIZE: 100,
+	OPTIONS.CTRL_TO_ZOOM: false,
+	OPTIONS.REALTIME_MOVE_SCALE: true,
+	OPTIONS.GRID_WEIGHT: 2,
+	OPTIONS.SHAPE_RECOGNIZER_DELAY: 0.5,
+}
+
+var string_options: Dictionary[OPTIONS, String] = {
+	OPTIONS.SQ_SIZE: "sq_size",
+	OPTIONS.CTRL_TO_ZOOM: "ctrl_to_zoom",
+	OPTIONS.REALTIME_MOVE_SCALE: "realtime_move_scale",
+	OPTIONS.GRID_WEIGHT: "grid_weight",
+	OPTIONS.SHAPE_RECOGNIZER_DELAY: "shape_recognizer_delay"
+}
 
 var shape_snap_tolerance = 0.5		#0.5 half a square
 var shape_snap_dist = 20      		#dist before snapping
@@ -25,10 +45,8 @@ func load_config_file():
 		emit_signal("config_loaded")
 		return
 	
-	sq_size = int(config.get_value("editor", "sq_size", sq_size))
-	ctrl_to_zoom = bool(config.get_value("editor", "ctrl_to_zoom", ctrl_to_zoom))
-	realtime_move_scale = bool(config.get_value("editor", "realtime_move_scale", realtime_move_scale))
-	grid_weight = bool(config.get_value("editor", "grid_weight", grid_weight))
+	for option in options.keys():
+		options[option] = config.get_value("editor", string_options[option], options[option])
 	
 	load_themes_from_settings()
 	
@@ -80,10 +98,9 @@ func save_default_settings():
 	config.set_value("theme_default", "background_color", "#" + EditorColors.background_col.to_html())
 	config.set_value("theme_default", "grid_color", "#" + EditorColors.grid_col.to_html())
 	
-	config.set_value("editor", "sq_size", sq_size)
-	config.set_value("editor", "ctrl_to_zoom", ctrl_to_zoom)
+	for option in options.keys():
+		config.set_value("editor", string_options[option], options[option])
+	
 	config.set_value("editor", "current_theme", "theme_default")
-	config.set_value("editor", "realtime_move_scale", realtime_move_scale)
-	config.set_value("editor", "grid_weight", grid_weight)
 	
 	config.save(config_path)
