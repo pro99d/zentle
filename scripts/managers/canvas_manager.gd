@@ -2,31 +2,61 @@ class_name CanvasManager
 
 var copy_buffer = []
 
-func make_copy(objs_duplicate: Array):
+## Save the passed objs inside [member CanvasManager.copy_buffer]
+func make_copy(objs: Array):
 	copy_buffer.clear()
-	if objs_duplicate.size() > 0:
-		copy_buffer = objs_duplicate
-	
+	if objs.size() > 0:
+		copy_buffer = objs
+
+## If the user has an image in the clipboard, the function adds a [TextureRect] with the corresponding image.
+## Otherwise it duplicates [member copy_buffer] into the canvas
 func paste_copy():
-	if copy_buffer.size() <= 0: return
-	
+	var has_img = DisplayServer.clipboard_has_image()
+	if !has_img && copy_buffer.size() <= 0: return
 	var new_objs = []
 	var rect = Rect2()
-	for obj in copy_buffer:
-		var new_obj = obj.duplicate()
-		move_obj(new_obj, Vector2.ONE * EditorOptions.sq_size)
-		new_objs.append(new_obj)
-		var new_rect = EditorFuncs.get_object_rect(new_obj)
+	if has_img:
+		var img = DisplayServer.clipboard_get_image()
+		var tex = ImageTexture.create_from_image(img)
+		var tex_rect = TextureRect.new()
+		tex_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		
-		if obj.is_in_group("text"):
-			new_obj.text = obj.text
+		# Scale the size to compensate for camera zoom
+		tex_rect.size = tex.get_size() / EditorData.camera.zoom.x
+		# All imgs are behind lines
+		tex_rect.z_index = -1
 		
-		if obj == copy_buffer[0]:
-			rect = new_rect
-		else:
-			rect = rect.merge(new_rect)
-	
+		tex_rect.texture = tex
+		
+		# When pasted, the img is centered around the mouse pos
+		tex_rect.position = EditorData.world_pos - tex_rect.size / 2
+		
+		new_objs.append(tex_rect)
+		
+		rect = tex_rect.get_rect()
+		copy_buffer.clear()
+	else:
+		for obj in copy_buffer:
+			var new_obj = obj.duplicate()
+			
+			# Add an offset to the copied item
+			move_obj(new_obj, Vector2.ONE * EditorOptions.sq_size)
+			
+			new_objs.append(new_obj)
+			var new_rect = EditorFuncs.get_object_rect(new_obj)
+			
+			# Copy text if the the item is a text object 
+			if obj.is_in_group("text"):
+				new_obj.text = obj.text
+			
+			if obj == copy_buffer[0]:
+				rect = new_rect
+			else:
+				rect = rect.merge(new_rect)
+
 	EditorHistory.create_action("paste", add_objs.bind(new_objs), remove_objs.bind(new_objs), true)
+	
+	# Select the new items after they are pasted
 	EditorFuncs.selection_manager.perform_objs_selection(new_objs, rect)
 
 func add_to_canvas(node):
@@ -95,7 +125,9 @@ func edit_text_under_mouse():
 			child.move_caret_to_mouse()
 			return true
 	return false
-	
+
+
+# TODO refactoring
 var erasing = false
 var curr_erased_lines = []
 func update_eraser():
@@ -126,18 +158,26 @@ func update_eraser():
 							else:
 								pass #remove from grid?
 
+## This function is called when the camera is moved / zoomed to update
+## a CodeEdit if a text object is currently being edited
 func update_text_edit_size():
+	# Get the CodeEdit node (if it's being currently used by a text object)
 	var curr_focused = EditorData.get_viewport().gui_get_focus_owner()
-	if curr_focused and !curr_focused.is_queued_for_deletion() and curr_focused.is_in_group("text_edit"):
-		var text_edit = curr_focused
-		var target = text_edit.get_meta("target_text").get_ref()
-		text_edit.position = EditorFuncs.get_world_to_screen_pos(target.position)
-		text_edit.add_theme_font_size_override("font_size", target.curr_font_size * EditorData.camera.zoom.x)
-		await EditorData.get_tree().process_frame
-		if text_edit:
-			text_edit.size.y = 0
-			text_edit.size.x = 0
-			text_edit.update_minimum_size()
+	if !curr_focused || curr_focused.is_queued_for_deletion() || !curr_focused.is_in_group("text_edit"):
+		return
+	
+	var text_edit = curr_focused
+	# Get the corresponding text object
+	var target: Text = text_edit.get_meta("target_text").get_ref()
+	text_edit.position = EditorFuncs.get_world_to_screen_pos(target.position)
+	text_edit.add_theme_font_size_override("font_size", target.curr_font_size * EditorData.camera.zoom.x)
+	# We wait for a frame after setting the font size and position
+	# to adjust the CodeEdit's size
+	await EditorData.get_tree().process_frame
+	if text_edit:
+		text_edit.size.y = 0
+		text_edit.size.x = 0
+		text_edit.update_minimum_size()
 
 func clear():
 	for child in get_children():

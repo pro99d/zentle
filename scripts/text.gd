@@ -1,5 +1,5 @@
 extends MarginContainer
-
+class_name Text
 
 var text = ""
 @export var min_height = 50

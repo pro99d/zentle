@@ -1,5 +1,7 @@
 extends Node
 
+
+## This function receives every _unhandled_input that is not blocked by a UI element.  
 func handle_input(event: InputEvent):
 	if event is InputEventMouseButton:
 		handle_mouse_button(event)
@@ -33,24 +35,28 @@ func handle_key(event: InputEventKey):
 		if event.keycode == KEY_T && event.shift_pressed:
 			EditorFuncs.toggle_quick_tools()
 
-				
 	elif EditorData.can_use_shortcuts && EditorTools.toggle_shortcuts.has(event.keycode):
 		EditorTools.toggle_to(EditorTools.toggle_shortcuts[event.keycode], event.pressed)
 
-
-var should_switch_to_select = false
+# TODO refactoring
 func handle_mouse_button(event: InputEventMouseButton):
 	if event.button_index == MOUSE_BUTTON_LEFT:
 		EditorData.mouse_down = event.pressed
 		if event.pressed:
 			if EditorTools.is_current(EditorTools.TOOLS.SELECT):
+				# Exit from editing a [Text] object while using the Select Tool and clicking outside the CodeEdit
 				EditorData.mouse_relative = Vector2(0, 0)
 				var text_edit = get_viewport().gui_get_focus_owner()
 				if text_edit && text_edit.is_in_group("text_edit") && !text_edit.get_rect().has_point(EditorFuncs.get_screen_to_world_pos(event.position)):
 					text_edit.release_focus()
+				
+				# If a CodeEdit is not currently focused
 				else:
+					# Check for single click selection of an object
 					EditorFuncs.selection_manager.single_click_selection()
+					
 					if event.double_click:
+						# Edit a text object by double clicking while using the Select Tool
 						var text_obj = EditorFuncs.selection_manager.get_first_selected_obj()
 						if text_obj && text_obj.is_in_group("text"):
 							text_obj.edit_text()
@@ -58,7 +64,7 @@ func handle_mouse_button(event: InputEventMouseButton):
 				
 			
 			elif EditorTools.is_current(EditorTools.TOOLS.TEXT):
-				#create text
+				# Create Text
 				if (!EditorFuncs.canvas_manager.edit_text_under_mouse()):
 						
 					var curr_focus = EditorData.get_viewport().gui_get_focus_owner()
@@ -77,7 +83,7 @@ func handle_mouse_button(event: InputEventMouseButton):
 			elif EditorTools.is_current(EditorTools.TOOLS.ERASER):
 				EditorFuncs.canvas_manager.update_eraser()
 		
-		#BUTTON LEFT UP
+		# BUTTON LEFT UP
 		else:
 			match EditorTools.current_tool:
 				EditorTools.TOOLS.SELECT:
@@ -91,16 +97,17 @@ func handle_mouse_button(event: InputEventMouseButton):
 				
 
 func handle_mouse_motion(event: InputEventMouseMotion):
+	# Workaround: event.relative occasionally returns fixed Vector2.ZERO, calculating
+	# manually from position
 	EditorData.mouse_relative = event.position - EditorData.screen_pos
 	
 	EditorData.screen_pos = event.position 
-	
 	var new_world_pos = EditorFuncs.get_screen_to_world_pos(event.position)
+	
 	EditorData.snapped_world_relative = EditorFuncs.get_grid_pos(new_world_pos, 0.5) - EditorFuncs.get_grid_pos(EditorData.world_pos, 0.5)
 	
 	EditorData.world_pos = new_world_pos
 	EditorData.pressure = max(event.pressure, 0.3)
-
 
 	match EditorTools.current_tool:
 		EditorTools.TOOLS.PEN:
@@ -110,10 +117,3 @@ func handle_mouse_motion(event: InputEventMouseMotion):
 			EditorFuncs.selection_manager.update_selection()
 		EditorTools.TOOLS.ERASER:
 			EditorFuncs.canvas_manager.update_eraser()
-		# TODO
-		# EditorTools.TOOLS.LINE:
-		# 	main.update_straight_line()
-		# EditorData.TOOLS.SPACER:
-		# 	main.update_spacer()
-		# EditorData.TOOLS.REGION:
-		# 	main.update_region()
