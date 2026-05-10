@@ -21,6 +21,8 @@ func _ready():
 	EditorFuncs.animations = $AnimationPlayer
 	$canvas_main/MarginContainer.visible = false
 	
+	# TODO use OS.low_processor_usage_mode 
+	# and RenderingServer.render_loop_enabled when idle
 	Engine.max_fps = 120
 
 func _unhandled_input(event):

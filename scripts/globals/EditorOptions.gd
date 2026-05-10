@@ -42,6 +42,7 @@ func load_config_file():
 	if err != OK:
 		save_default_settings()
 		emit_signal("theme_changed", EditorColors.color_palette.duplicate())
+		load_themes_from_settings()
 		emit_signal("config_loaded")
 		return
 	
@@ -89,7 +90,7 @@ func load_theme(theme: String):
 		emit_signal("theme_changed", old_palette)
 		config.set_value("editor", "current_theme", theme)
 		config.save(config_path)
-		
+
 func save_default_settings():
 	for c in range(EditorColors.color_palette.size()):
 		var key = EditorColors.color_names[c]
@@ -97,6 +98,45 @@ func save_default_settings():
 	
 	config.set_value("theme_default", "background_color", "#" + EditorColors.background_col.to_html())
 	config.set_value("theme_default", "grid_color", "#" + EditorColors.grid_col.to_html())
+	
+	var other_themes_to_save = {
+		"theme_paper_soft": {
+			"main_text":"#43403aff",
+			"critical":"#c56b5bff",
+			"important":"#a63d50ff",
+			"quote":"#6b6badff",
+			"meta":"#2a6286ff",
+			"success":"#4a7c5fff",
+			"background_color":"#e6e1d6ff",
+			"grid_color":"#dcd7ccff"
+		},
+		"theme_gruvbox": {
+			"main_text":"#ebdbb2ff",
+			"critical":"#fb4934ff",
+			"important":"#fabd2fff",
+			"quote":"#83a598ff",
+			"meta":"#d3869bff",
+			"success":"#b8bb26ff",
+			"background_color":"#282828ff",
+			"grid_color":"#3c3836ff",
+		},
+		"theme_nord": {
+			"main_text":"#d8dee9ff",
+			"critical":"#bf616aff",
+			"important":"#ebcb8bff",
+			"quote":"#88c0d0ff",
+			"meta":"#5e81acff",
+			"success":"#a3be8cff",
+			"background_color":"#2e3440ff",
+			"grid_color":"#3b4252ff",
+		}
+	}
+	
+	for theme in other_themes_to_save:
+		var theme_colors = other_themes_to_save[theme]
+		for col_name in theme_colors:
+			config.set_value(theme, col_name, theme_colors[col_name])
+	
 	
 	for option in options.keys():
 		config.set_value("editor", string_options[option], options[option])
