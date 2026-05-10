@@ -88,7 +88,6 @@ func reset():
 	EditorData.camera.reset()
 	EditorFiles.set_current_path("")
 	
-
 func begin_handle_open():
 	EditorFiles.show_confirm_dialog(self.end_handle_open)
 	
