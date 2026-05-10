@@ -28,7 +28,7 @@ Select (s)
 Text (t)
 
 - surround the text with \_\_...\_\_ to underline, with \*\*...\*\* to bold
-- insert inline LaTex expressions inside \$ ... \$ blocks
+- insert inline LaTex expressions inside \$ ... \$ blocks (Not available in the web demo)
 
   <img width="334" height="125" alt="lat_rescaled" src="https://github.com/user-attachments/assets/f05a8610-3fc8-4414-ab24-096d9cd10212" />
 
