@@ -2,6 +2,7 @@
 
 Zentle is a minimalist note-taking app focused on speed. \
 Note: This project is in a very early WIP stage. If it doesn't break, it's probably a bug. 
+WEB DEMO: https://bin-h.itch.io/zentle
 <br> <br>
 <img width="1280" height="720" alt="front" src="https://github.com/user-attachments/assets/cbed217b-4db3-4f32-8bb8-cc316caefdfc" />
 
@@ -34,7 +35,7 @@ Text (t)
 
 #### Themes
 
-Press **Ctrl + Shift + t** to open the theme selector. The listed themes are loaded from the config file.
+Press **Ctrl + Shift + t** (just Y in the web demo) to open the theme selector. The listed themes are loaded from the config file.
 
 
 https://github.com/user-attachments/assets/dcf0cc23-09bf-4745-bc5b-e673d74939aa
