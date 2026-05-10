@@ -14,7 +14,7 @@ var shift_pressed: bool = false
 
 var current_color: Color = Color.WHITE
 var current_size: float = 10
-var current_text_size: int = 40
+var current_text_size: int = 50
 var curr_eraser_size: int = 10
 
 var main: Main

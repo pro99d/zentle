@@ -24,6 +24,8 @@ public partial class GenerateLatexImg : Node
             canvas.Clear(SKColors.Transparent);
             painter.Draw(canvas);
 
+            if (width * height == 0) { return null; }
+
             var img = Image.CreateFromData(
                 width,
                 height,
