@@ -358,7 +358,7 @@ value = 0.15
 
 [node name="open_save_dialog" type="FileDialog" parent="canvas_main" unique_id=1163121996]
 oversampling_override = 1.0
-filters = PackedStringArray("*.wdata")
+filters = PackedStringArray("*.zentle")
 use_native_dialog = true
 
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="canvas_main" unique_id=65153881]

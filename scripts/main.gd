@@ -22,9 +22,6 @@ func _ready():
 	$canvas_main/MarginContainer.visible = false
 	
 	Engine.max_fps = 120
-	
-	
-	
 
 func _unhandled_input(event):
 	EditorInputs.handle_input(event)
